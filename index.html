@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Filming Monitor</title>
+</head>
+<body>
+  <button class="start">Start</button>
+  <canvas class="volumeMeterCanvas" width="40" height="340"></canvas>
+  <div class="volume-text">0</div>
+
+  <script type="text/javascript">
+    window.onload = function () {
+        "use strict";
+
+        var volumeTextElement = document.querySelector('.volume-text');
+        var AudioContext = window.AudioContext || window.webkitAudioContext;
+        var audioContent;
+        const volumeMeterCanvas = document.querySelector('.volumeMeterCanvas');
+        const volumeMeterCanvasContext = volumeMeterCanvas.getContext('2d');
+
+        var drawVolumeMeter = (db) => {
+          volumeMeterCanvasContext.clearRect(0, 0, volumeMeterCanvas.width, volumeMeterCanvas.height);
+          volumeMeterCanvasContext.fillStyle = 'green';
+
+          for(let i = 0; i <= db; i = i + 15) {
+            let step = i/15;
+            let y = volumeMeterCanvas.height - (step * 20);
+            if(step == 11) {
+              volumeMeterCanvasContext.fillStyle = 'orange';
+            } else if(step == 15) {
+              volumeMeterCanvasContext.fillStyle = 'red';
+            }
+            volumeMeterCanvasContext.fillRect(0, y, 40, 18);
+          }
+        }
+        
+        var soundAllowed = function (stream) {
+            var audioStream = audioContent.createMediaStreamSource( stream );
+            var analyser = audioContent.createAnalyser();
+            analyser.smoothingTimeConstant = 0.90;
+            analyser.fftSize = 32;
+            audioStream.connect(analyser);
+
+            var bufferLength = analyser.frequencyBinCount;
+            var frequencyArray = new Uint8Array(bufferLength);
+
+            var showVolume = function () {
+                window.requestAnimationFrame(showVolume);
+
+                  analyser.getByteFrequencyData(frequencyArray);
+                  var db = 0;
+                  for(var i = 0; i < bufferLength; i++) {
+                      var x = frequencyArray[i];
+                      if(x > db) { db = x; }
+                  }
+                  volumeTextElement.innerHTML = Math.floor(db) + " dB";
+                  drawVolumeMeter(db);
+      
+            }
+            showVolume();
+        }
+
+        document.querySelector('.start').onclick = function () {
+          navigator.mediaDevices.getUserMedia({audio:true})
+              .then(soundAllowed)
+
+          audioContent = new AudioContext();
+        }
+    };
+
+  </script>
+</body>
+</html>
