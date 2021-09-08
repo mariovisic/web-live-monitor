@@ -35,14 +35,16 @@ window.onload = function () {
       window.stream = stream;
 
       webcamVideoElement.srcObject = stream;
-      webcamVideoStatsElement.innerText = `${videoTrackSettings.width}x${videoTrackSettings.height}@${videoTrackSettings.frameRate}`
+      webcamVideoStatsElement.innerText = `${videoTrackSettings.width}x${videoTrackSettings.height}@${videoTrackSettings.frameRate.toPrecision(2)}fps`
     }
     
     var setupVolumeMeter = function (stream) {
         var audioStream = audioContent.createMediaStreamSource( stream );
         var analyser = audioContent.createAnalyser();
-        analyser.smoothingTimeConstant = 0.90;
+        analyser.smoothingTimeConstant = 0.70;
         analyser.fftSize = 32;
+        analyser.minDecibels = -90;
+        analyser.maxDecibels = -20;
         audioStream.connect(analyser);
 
         var bufferLength = analyser.frequencyBinCount;
@@ -52,15 +54,9 @@ window.onload = function () {
             window.requestAnimationFrame(showVolume);
 
               analyser.getByteFrequencyData(frequencyArray);
-              var db = 0;
-              for(var i = 0; i < bufferLength; i++) {
-                  var x = frequencyArray[i];
-                  if(x > db) { db = x; }
-              }
+              var db = Math.max.apply( null, frequencyArray );
 
-              
-
-              volumeTextElement.innerText = `${Math.floor(db / 10) * 10} dB`;
+              volumeTextElement.innerText = `${Math.floor((db * 120 / 255) / 10) * 10} dB`;
               drawVolumeMeter(db);
   
         }
@@ -86,6 +82,5 @@ window.onload = function () {
             uniqueId: 'notes-for-recording',
         },
         toolbar: ["bold", "italic", "code", "preview"],
-        minHeight: '800px',
     });
 };
