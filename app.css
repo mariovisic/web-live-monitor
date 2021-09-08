@@ -1,12 +1,21 @@
 body {
   font-family: "Helvetica Neue"; 
 }
+
+.wrapper {
+  display: none;
+}
+
 .webcamVideo {
   width: 425px;
 }
 
 .volumeMeter {
   width: 52px;
+}
+
+.webcamVideoStats, .volume-text {
+  margin-top: 0.5em;
 }
 
 .webcam, .volumeMeter {
@@ -16,4 +25,8 @@ body {
 
 .webcamVideo {
   border: 1px solid black;
+}
+
+.notes {
+  margin-top: 2em;
 }

@@ -74,6 +74,18 @@ window.onload = function () {
       });
 
       event.target.style.display = 'none';
+      document.querySelector('.wrapper').style.display = 'block';
       audioContent = new AudioContext();
     }
+
+    var inscrybmde = new InscrybMDE({
+        element: document.querySelector('.notesTextArea'),
+        status: false,
+        autosave: {
+            enabled: true,
+            uniqueId: 'notes-for-recording',
+        },
+        toolbar: ["bold", "italic", "code", "preview"],
+        minHeight: '800px',
+    });
 };
