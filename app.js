@@ -42,9 +42,9 @@ window.onload = function () {
         var audioStream = audioContent.createMediaStreamSource( stream );
         var analyser = audioContent.createAnalyser();
         analyser.smoothingTimeConstant = 0.70;
-        analyser.fftSize = 32;
+        analyser.fftSize = 2048;
         analyser.minDecibels = -90;
-        analyser.maxDecibels = -20;
+        analyser.maxDecibels = -15;
         audioStream.connect(analyser);
 
         var bufferLength = analyser.frequencyBinCount;
