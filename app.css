@@ -1,0 +1,19 @@
+body {
+  font-family: "Helvetica Neue"; 
+}
+.webcamVideo {
+  width: 425px;
+}
+
+.volumeMeter {
+  width: 52px;
+}
+
+.webcam, .volumeMeter {
+  display: inline-block;
+  text-align: center;
+}
+
+.webcamVideo {
+  border: 1px solid black;
+}
